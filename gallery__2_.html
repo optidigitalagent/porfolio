@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gallery — Unique Rabbit Studios</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:     #000000;
+    --bg2:    #080808;
+    --bg3:    #0e0e0e;
+    --white:  #ffffff;
+    --gray1:  #e8e8e8;
+    --gray2:  #a7a7a7;
+    --gray3:  #666666;
+    --border: rgba(255,255,255,0.10);
+    --border2:rgba(255,255,255,0.18);
+    --accent: #00c8c0;
+    --accent2:#009e97;
+    --max:    1280px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  /* ─── PAGE HEADER ─── */
+  .page-header {
+    padding: 120px 48px 72px;
+    max-width: var(--max);
+    margin: 0 auto;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .page-header-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  .page-header-title {
+    font-family: 'DM Sans', sans-serif;
+    font-size: clamp(40px, 5vw, 64px);
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.1;
+    margin-bottom: 20px;
+  }
+
+  .page-header-desc {
+    font-size: 16px;
+    color: var(--gray2);
+    max-width: 520px;
+    font-weight: 300;
+    line-height: 1.7;
+  }
+
+  /* ─── MAIN CONTENT ─── */
+  .gallery-page {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 0 48px 120px;
+  }
+
+  /* ─── CATEGORY BLOCK ─── */
+  .category-block {
+    padding-top: 96px;
+  }
+
+  /* Category intro: title + hero image + description */
+  .category-intro {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin-bottom: 56px;
+    border: 1px solid var(--border);
+  }
+
+  .category-intro-image {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 4/3;
+    cursor: pointer;
+  }
+
+  .category-intro-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s ease;
+  }
+
+  .category-intro-image:hover img {
+    transform: scale(1.04);
+  }
+
+  .category-intro-image::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.18);
+    transition: background 0.3s;
+  }
+
+  .category-intro-image:hover::after {
+    background: rgba(0,0,0,0.08);
+  }
+
+  /* zoom icon hint */
+  .category-intro-image .zoom-hint {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    z-index: 2;
+    width: 36px; height: 36px;
+    border: 1px solid rgba(255,255,255,0.5);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(4px);
+  }
+
+  .category-intro-image:hover .zoom-hint { opacity: 1; }
+
+  .zoom-hint svg { width: 16px; height: 16px; fill: none; stroke: white; stroke-width: 1.8; }
+
+  .category-intro-body {
+    padding: 48px 52px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: var(--bg3);
+    border-left: 1px solid var(--border);
+  }
+
+  .category-number {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .category-number::after {
+    content: '';
+    flex: 1;
+    max-width: 40px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .category-title {
+    font-family: 'DM Sans', sans-serif;
+    font-size: clamp(28px, 3vw, 40px);
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.15;
+    margin-bottom: 20px;
+  }
+
+  .category-description {
+    font-size: 15px;
+    color: var(--gray2);
+    font-weight: 300;
+    line-height: 1.75;
+    margin-bottom: 32px;
+  }
+
+  .category-count {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gray3);
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ─── PHOTO STRIP ─── */
+  .photo-strip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border: 1px solid var(--border);
+    border-top: none;
+  }
+
+  .photo-strip-item {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 1/1;
+    cursor: pointer;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .photo-strip-item:nth-child(3n) { border-right: none; }
+
+  .photo-strip-item img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .photo-strip-item:hover img { transform: scale(1.06); }
+
+  .photo-strip-item::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.0);
+    transition: background 0.3s;
+  }
+
+  .photo-strip-item:hover::after {
+    background: rgba(0,200,192,0.08);
+  }
+
+  /* zoom cursor indicator */
+  .photo-strip-item .item-zoom {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0.6);
+    z-index: 2;
+    width: 44px; height: 44px;
+    border: 1px solid rgba(255,255,255,0.7);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0;
+    transition: opacity 0.25s, transform 0.25s;
+    pointer-events: none;
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(6px);
+  }
+
+  .photo-strip-item:hover .item-zoom {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  .item-zoom svg { width: 18px; height: 18px; fill: none; stroke: white; stroke-width: 1.8; }
+
+  /* ─── CATEGORY DIVIDER ─── */
+  .category-divider {
+    width: 100%;
+    height: 1px;
+    background: var(--border);
+    margin-top: 80px;
+  }
+
+  /* ─── LIGHTBOX ─── */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0,0,0,0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, background 0.3s ease;
+  }
+
+  .lightbox.open {
+    opacity: 1;
+    pointer-events: all;
+    background: rgba(0,0,0,0.92);
+  }
+
+  .lightbox-inner {
+    position: relative;
+    max-width: 90vw;
+    max-height: 90vh;
+    transform: scale(0.92);
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .lightbox.open .lightbox-inner { transform: scale(1); }
+
+  .lightbox-img {
+    display: block;
+    max-width: 90vw;
+    max-height: 85vh;
+    object-fit: contain;
+    border: 1px solid var(--border2);
+  }
+
+  .lightbox-close {
+    position: absolute;
+    top: -44px;
+    right: 0;
+    background: none;
+    border: 1px solid var(--border2);
+    color: var(--gray2);
+    cursor: pointer;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    transition: color 0.2s, border-color 0.2s;
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  .lightbox-close:hover { color: var(--white); border-color: var(--white); }
+
+  .lightbox-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.5);
+    border: 1px solid var(--border2);
+    color: var(--gray2);
+    cursor: pointer;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
+    font-size: 20px;
+    backdrop-filter: blur(8px);
+  }
+
+  .lightbox-nav:hover { color: var(--white); border-color: var(--white); background: rgba(0,0,0,0.75); }
+  .lightbox-prev { left: -60px; }
+  .lightbox-next { right: -60px; }
+
+  .lightbox-caption {
+    position: absolute;
+    bottom: -40px;
+    left: 0; right: 0;
+    text-align: center;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gray3);
+  }
+
+  /* ─── BOTTOM CTA ─── */
+  .bottom-cta {
+    margin: 96px 48px 0;
+    max-width: var(--max);
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 48px 96px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    border-top: 1px solid var(--border);
+    padding-top: 72px;
+  }
+
+  .bottom-cta-label {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gray3);
+  }
+
+  .bottom-cta-title {
+    font-family: 'DM Sans', sans-serif;
+    font-size: clamp(24px, 3vw, 36px);
+    font-weight: 700;
+    text-align: center;
+    color: var(--white);
+  }
+
+  .btn-main-site {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 36px;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: background 0.25s, color 0.25s;
+    cursor: pointer;
+  }
+
+  .btn-main-site:hover {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  .btn-main-site svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 860px) {
+    .page-header { padding: 96px 24px 48px; }
+    .gallery-page { padding: 0 24px 80px; }
+
+    .category-intro {
+      grid-template-columns: 1fr;
+    }
+
+    .category-intro-body {
+      padding: 32px 28px;
+      border-left: none;
+      border-top: 1px solid var(--border);
+    }
+
+    .photo-strip {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .photo-strip-item:nth-child(3n) { border-right: 1px solid var(--border); }
+    .photo-strip-item:nth-child(2n) { border-right: none; }
+
+    .lightbox-prev { left: -48px; }
+    .lightbox-next { right: -48px; }
+
+    .bottom-cta { padding: 48px 24px 64px; }
+  }
+
+  @media (max-width: 520px) {
+    .photo-strip { grid-template-columns: 1fr; }
+    .photo-strip-item:nth-child(2n) { border-right: none; }
+    .lightbox-prev { left: 8px; }
+    .lightbox-next { right: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- PAGE HEADER -->
+<header class="page-header">
+  <p class="page-header-label">Portfolio</p>
+  <h1 class="page-header-title">Our Gallery</h1>
+  <p class="page-header-desc">A selection of our craft — from large-scale sculptures and immersive photo zones to custom signage and conceptual installations.</p>
+</header>
+
+<!-- GALLERY CONTENT -->
+<main class="gallery-page">
+
+  <!-- ══ CATEGORY 1: 3D Characters & Sculptures ══ -->
+  <section class="category-block" id="3d-characters">
+    <div class="category-intro">
+      <div class="category-intro-image" data-src="photos/photo_2026-05-26_17-22-35.jpg" data-cat="0" data-idx="0">
+        <img src="photos/photo_2026-05-26_17-22-35.jpg" alt="3D Characters &amp; Sculptures">
+        <div class="zoom-hint">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+        </div>
+      </div>
+      <div class="category-intro-body">
+        <p class="category-number">01</p>
+        <h2 class="category-title">3D Characters<br>&amp; Sculptures</h2>
+        <p class="category-description">We bring characters to life at any scale — from whimsical mascots and oversized props to photorealistic figurines. Each piece is sculpted, engineered, and finished entirely in-house.</p>
+        <p class="category-count">33 works in this series</p>
+      </div>
+    </div>
+    <div class="photo-strip" id="cat-0-strip">
+      <div class="photo-strip-item" data-cat="0" data-idx="0"><img src="photos/photo_2026-05-26_17-22-35.jpg" alt="3D Characters 1"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="0" data-idx="1"><img src="photos/photo_2026-05-26_17-22-57.jpg" alt="3D Characters 2"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="0" data-idx="2"><img src="photos/photo_2026-05-26_17-23-20.jpg" alt="3D Characters 3"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="0" data-idx="3"><img src="photos/photo_2026-05-26_17-22-37.jpg" alt="3D Characters 4"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="0" data-idx="4"><img src="photos/photo_2026-05-26_17-23-09.jpg" alt="3D Characters 5"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="0" data-idx="5"><img src="photos/photo_2026-05-26_17-23-16.jpg" alt="3D Characters 6"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="0" data-idx="6"><img src="photos/photo_2026-05-26_17-22-40.jpg" alt="3D Characters 7"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="0" data-idx="7"><img src="photos/photo_2026-05-26_17-23-05.jpg" alt="3D Characters 8"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="0" data-idx="8"><img src="photos/photo_2026-05-26_17-24-33.jpg" alt="3D Characters 9"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="0" data-idx="9"><img src="photos/photo_2026-05-26_17-22-41.jpg" alt="3D Characters 10"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="0" data-idx="10"><img src="photos/photo_2026-05-26_17-24-30.jpg" alt="3D Characters 11"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="0" data-idx="11"><img src="photos/photo_2026-05-26_17-23-27.jpg" alt="3D Characters 12"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="0" data-idx="12"><img src="photos/photo_2026-05-26_17-22-58.jpg" alt="3D Characters 13"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="0" data-idx="13"><img src="photos/photo_2026-05-26_17-23-23.jpg" alt="3D Characters 14"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="0" data-idx="14"><img src="photos/photo_2026-05-26_17-24-34.jpg" alt="3D Characters 15"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="0" data-idx="15"><img src="photos/photo_2026-05-26_17-22-58 (2).jpg" alt="3D Characters 16"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="0" data-idx="16"><img src="photos/photo_2026-05-26_17-23-25.jpg" alt="3D Characters 17"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="0" data-idx="17"><img src="photos/photo_2026-05-26_17-24-27 (2).jpg" alt="3D Characters 18"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="0" data-idx="18"><img src="photos/photo_2026-05-26_17-23-03.jpg" alt="3D Characters 19"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="0" data-idx="19"><img src="photos/photo_2026-05-26_17-23-17.jpg" alt="3D Characters 20"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="0" data-idx="20"><img src="photos/photo_2026-05-26_17-24-33 (2).jpg" alt="3D Characters 21"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="0" data-idx="21"><img src="photos/photo_2026-05-26_17-23-06.jpg" alt="3D Characters 22"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="0" data-idx="22"><img src="photos/photo_2026-05-26_17-23-21.jpg" alt="3D Characters 23"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="0" data-idx="23"><img src="photos/photo_2026-05-26_17-24-31.jpg" alt="3D Characters 24"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="0" data-idx="24"><img src="photos/photo_2026-05-26_17-23-10.jpg" alt="3D Characters 25"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="0" data-idx="25"><img src="photos/photo_2026-05-26_17-23-22.jpg" alt="3D Characters 26"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="0" data-idx="26"><img src="photos/photo_2026-05-26_17-24-34 (2).jpg" alt="3D Characters 27"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="0" data-idx="27"><img src="photos/photo_2026-05-26_17-24-12.jpg" alt="3D Characters 28"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="0" data-idx="28"><img src="photos/photo_2026-05-26_17-23-26.jpg" alt="3D Characters 29"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="0" data-idx="29"><img src="photos/photo_2026-05-26_17-24-24.jpg" alt="3D Characters 30"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="0" data-idx="30"><img src="photos/photo_2026-05-26_17-24-32.jpg" alt="3D Characters 31"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="0" data-idx="31"><img src="photos/photo_2026-05-26_17-24-29.jpg" alt="3D Characters 32"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="0" data-idx="32"><img src="photos/photo_2026-05-26_17-24-47.jpg" alt="3D Characters 33"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+    </div>
+  </section>
+
+  <div class="category-divider"></div>
+
+  <!-- ══ CATEGORY 2: Photo Zones & Installations ══ -->
+  <section class="category-block" id="photo-zones">
+    <div class="category-intro">
+      <div class="category-intro-image" data-src="photos/photo_2026-05-26_17-22-52.jpg" data-cat="1" data-idx="0">
+        <img src="photos/photo_2026-05-26_17-22-52.jpg" alt="Photo Zones &amp; Installations">
+        <div class="zoom-hint">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+        </div>
+      </div>
+      <div class="category-intro-body">
+        <p class="category-number">02</p>
+        <h2 class="category-title">Photo Zones<br>&amp; Installations</h2>
+        <p class="category-description">Immersive environments designed for events, brand activations, and permanent installations. We engineer experiences that captivate guests and drive social sharing.</p>
+        <p class="category-count">43 works in this series</p>
+      </div>
+    </div>
+    <div class="photo-strip" id="cat-1-strip">
+      <div class="photo-strip-item" data-cat="1" data-idx="0"><img src="photos/photo_2026-05-26_17-22-52.jpg" alt="Photo Zone 1"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="1"><img src="photos/photo_2026-05-26_17-23-00.jpg" alt="Photo Zone 2"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="2"><img src="photos/photo_2026-05-26_17-22-48.jpg" alt="Photo Zone 3"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="3"><img src="photos/photo_2026-05-26_17-24-27.jpg" alt="Photo Zone 4"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="4"><img src="photos/photo_2026-05-26_17-24-43.jpg" alt="Photo Zone 5"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="5"><img src="photos/photo_2026-05-26_17-22-43.jpg" alt="Photo Zone 6"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="6"><img src="photos/photo_2026-05-26_17-22-53.jpg" alt="Photo Zone 7"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="7"><img src="photos/photo_2026-05-26_17-23-00 (2).jpg" alt="Photo Zone 8"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="8"><img src="photos/photo_2026-05-26_17-24-40.jpg" alt="Photo Zone 9"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="9"><img src="photos/photo_2026-05-26_17-24-26.jpg" alt="Photo Zone 10"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="10"><img src="photos/photo_2026-05-26_17-24-36.jpg" alt="Photo Zone 11"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="11"><img src="photos/photo_2026-05-26_17-22-51.jpg" alt="Photo Zone 12"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="12"><img src="photos/photo_2026-05-26_17-22-54.jpg" alt="Photo Zone 13"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="13"><img src="photos/photo_2026-05-26_17-23-01.jpg" alt="Photo Zone 14"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="14"><img src="photos/photo_2026-05-26_17-24-41.jpg" alt="Photo Zone 15"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="15"><img src="photos/photo_2026-05-26_17-24-25.jpg" alt="Photo Zone 16"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="16"><img src="photos/photo_2026-05-26_17-24-36 (2).jpg" alt="Photo Zone 17"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="17"><img src="photos/photo_2026-05-26_17-22-51 (2).jpg" alt="Photo Zone 18"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="18"><img src="photos/photo_2026-05-26_17-22-54 (2).jpg" alt="Photo Zone 19"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="19"><img src="photos/photo_2026-05-26_17-23-01 (2).jpg" alt="Photo Zone 20"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="20"><img src="photos/photo_2026-05-26_17-24-42.jpg" alt="Photo Zone 21"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="21"><img src="photos/photo_2026-05-26_17-23-08.jpg" alt="Photo Zone 22"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="22"><img src="photos/photo_2026-05-26_17-24-37.jpg" alt="Photo Zone 23"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="23"><img src="photos/photo_2026-05-26_17-24-28.jpg" alt="Photo Zone 24"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="24"><img src="photos/photo_2026-05-26_17-22-55.jpg" alt="Photo Zone 25"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="25"><img src="photos/photo_2026-05-26_17-23-02.jpg" alt="Photo Zone 26"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="26"><img src="photos/photo_2026-05-26_17-24-42 (2).jpg" alt="Photo Zone 27"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="27"><img src="photos/photo_2026-05-26_17-23-06 (2).jpg" alt="Photo Zone 28"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="28"><img src="photos/photo_2026-05-26_17-24-29 (2).jpg" alt="Photo Zone 29"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="29"><img src="photos/photo_2026-05-26_17-24-38.jpg" alt="Photo Zone 30"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="30"><img src="photos/photo_2026-05-26_17-22-56.jpg" alt="Photo Zone 31"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="31"><img src="photos/photo_2026-05-26_17-23-02 (2).jpg" alt="Photo Zone 32"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="32"><img src="photos/photo_2026-05-26_17-24-39.jpg" alt="Photo Zone 33"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="33"><img src="photos/photo_2026-05-26_17-24-22.jpg" alt="Photo Zone 34"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="34"><img src="photos/photo_2026-05-26_17-24-43 (2).jpg" alt="Photo Zone 35"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="35"><img src="photos/photo_2026-05-26_17-24-44.jpg" alt="Photo Zone 36"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="36"><img src="photos/photo_2026-05-26_17-22-59.jpg" alt="Photo Zone 37"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="37"><img src="photos/photo_2026-05-26_17-24-39 (2).jpg" alt="Photo Zone 38"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="38"><img src="photos/photo_2026-05-26_17-24-23.jpg" alt="Photo Zone 39"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="39"><img src="photos/photo_2026-05-26_17-24-37 (2).jpg" alt="Photo Zone 40"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="40"><img src="photos/photo_2026-05-26_17-24-45.jpg" alt="Photo Zone 41"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="41"><img src="photos/photo_2026-05-26_17-24-45 (2).jpg" alt="Photo Zone 42"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="1" data-idx="42"><img src="photos/photo_2026-05-26_17-23-24.jpg" alt="Photo Zone 43"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+    </div>
+  </section>
+
+  <div class="category-divider"></div>
+
+  <!-- ══ CATEGORY 3: Signage ══ -->
+  <section class="category-block" id="signage">
+    <div class="category-intro">
+      <div class="category-intro-image" data-src="photos/photo_2026-05-26_17-22-42.jpg" data-cat="2" data-idx="0">
+        <img src="photos/photo_2026-05-26_17-22-42.jpg" alt="Signage &amp; Brand Displays">
+        <div class="zoom-hint">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+        </div>
+      </div>
+      <div class="category-intro-body">
+        <p class="category-number">03</p>
+        <h2 class="category-title">Signage &amp;<br>Brand Displays</h2>
+        <p class="category-description">Custom volumetric lettering, illuminated signs, and branded environmental graphics. Built to make your brand impossible to ignore — in retail, events, or permanent installations.</p>
+        <p class="category-count">11 works in this series</p>
+      </div>
+    </div>
+    <div class="photo-strip" id="cat-2-strip">
+      <div class="photo-strip-item" data-cat="2" data-idx="0"><img src="photos/photo_2026-05-26_17-22-42.jpg" alt="Signage 1"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="2" data-idx="1"><img src="photos/photo_2026-05-26_17-22-47.jpg" alt="Signage 2"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="2" data-idx="2"><img src="photos/photo_2026-05-26_17-23-11.jpg" alt="Signage 3"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="2" data-idx="3"><img src="photos/photo_2026-05-26_17-22-44.jpg" alt="Signage 4"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="2" data-idx="4"><img src="photos/photo_2026-05-26_17-22-48 (2).jpg" alt="Signage 5"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="2" data-idx="5"><img src="photos/photo_2026-05-26_17-23-07.jpg" alt="Signage 6"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="2" data-idx="6"><img src="photos/photo_2026-05-26_17-22-45.jpg" alt="Signage 7"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="2" data-idx="7"><img src="photos/photo_2026-05-26_17-22-49.jpg" alt="Signage 8"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="2" data-idx="8"><img src="photos/photo_2026-05-26_17-23-12.jpg" alt="Signage 9"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="2" data-idx="9"><img src="photos/photo_2026-05-26_17-22-46.jpg" alt="Signage 10"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+      <div class="photo-strip-item" data-cat="2" data-idx="10"><img src="photos/photo_2026-05-26_17-22-50.jpg" alt="Signage 11"><div class="item-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- BOTTOM CTA -->
+<div class="bottom-cta">
+  <p class="bottom-cta-label">Unique Rabbit Studios</p>
+  <h2 class="bottom-cta-title">Want to see the full picture?</h2>
+  <a href="#MAIN-SITE-URL" class="btn-main-site">
+    Go to Main Site
+    <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+  </a>
+</div>
+
+<!-- ─── LIGHTBOX ─── -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer">
+  <div class="lightbox-inner">
+    <button class="lightbox-close" id="lb-close" aria-label="Close">&times;</button>
+    <button class="lightbox-nav lightbox-prev" id="lb-prev" aria-label="Previous">&#8592;</button>
+    <img class="lightbox-img" id="lb-img" src="" alt="">
+    <button class="lightbox-nav lightbox-next" id="lb-next" aria-label="Next">&#8594;</button>
+    <p class="lightbox-caption" id="lb-caption"></p>
+  </div>
+</div>
+
+<script>
+(function () {
+  const categories = [
+    {
+      name: '3D Characters & Sculptures',
+      images: [
+        'photos/photo_2026-05-26_17-22-35.jpg',
+        'photos/photo_2026-05-26_17-22-57.jpg',
+        'photos/photo_2026-05-26_17-23-20.jpg',
+        'photos/photo_2026-05-26_17-22-37.jpg',
+        'photos/photo_2026-05-26_17-23-09.jpg',
+        'photos/photo_2026-05-26_17-23-16.jpg',
+        'photos/photo_2026-05-26_17-22-40.jpg',
+        'photos/photo_2026-05-26_17-23-05.jpg',
+        'photos/photo_2026-05-26_17-24-33.jpg',
+        'photos/photo_2026-05-26_17-22-41.jpg',
+        'photos/photo_2026-05-26_17-24-30.jpg',
+        'photos/photo_2026-05-26_17-23-27.jpg',
+        'photos/photo_2026-05-26_17-22-58.jpg',
+        'photos/photo_2026-05-26_17-23-23.jpg',
+        'photos/photo_2026-05-26_17-24-34.jpg',
+        'photos/photo_2026-05-26_17-22-58 (2).jpg',
+        'photos/photo_2026-05-26_17-23-25.jpg',
+        'photos/photo_2026-05-26_17-24-27 (2).jpg',
+        'photos/photo_2026-05-26_17-23-03.jpg',
+        'photos/photo_2026-05-26_17-23-17.jpg',
+        'photos/photo_2026-05-26_17-24-33 (2).jpg',
+        'photos/photo_2026-05-26_17-23-06.jpg',
+        'photos/photo_2026-05-26_17-23-21.jpg',
+        'photos/photo_2026-05-26_17-24-31.jpg',
+        'photos/photo_2026-05-26_17-23-10.jpg',
+        'photos/photo_2026-05-26_17-23-22.jpg',
+        'photos/photo_2026-05-26_17-24-34 (2).jpg',
+        'photos/photo_2026-05-26_17-24-12.jpg',
+        'photos/photo_2026-05-26_17-23-26.jpg',
+        'photos/photo_2026-05-26_17-24-24.jpg',
+        'photos/photo_2026-05-26_17-24-32.jpg',
+        'photos/photo_2026-05-26_17-24-29.jpg',
+        'photos/photo_2026-05-26_17-24-47.jpg',
+      ]
+    },
+    {
+      name: 'Photo Zones & Installations',
+      images: [
+        'photos/photo_2026-05-26_17-22-52.jpg',
+        'photos/photo_2026-05-26_17-23-00.jpg',
+        'photos/photo_2026-05-26_17-22-48.jpg',
+        'photos/photo_2026-05-26_17-24-27.jpg',
+        'photos/photo_2026-05-26_17-24-43.jpg',
+        'photos/photo_2026-05-26_17-22-43.jpg',
+        'photos/photo_2026-05-26_17-22-53.jpg',
+        'photos/photo_2026-05-26_17-23-00 (2).jpg',
+        'photos/photo_2026-05-26_17-24-40.jpg',
+        'photos/photo_2026-05-26_17-24-26.jpg',
+        'photos/photo_2026-05-26_17-24-36.jpg',
+        'photos/photo_2026-05-26_17-22-51.jpg',
+        'photos/photo_2026-05-26_17-22-54.jpg',
+        'photos/photo_2026-05-26_17-23-01.jpg',
+        'photos/photo_2026-05-26_17-24-41.jpg',
+        'photos/photo_2026-05-26_17-24-25.jpg',
+        'photos/photo_2026-05-26_17-24-36 (2).jpg',
+        'photos/photo_2026-05-26_17-22-51 (2).jpg',
+        'photos/photo_2026-05-26_17-22-54 (2).jpg',
+        'photos/photo_2026-05-26_17-23-01 (2).jpg',
+        'photos/photo_2026-05-26_17-24-42.jpg',
+        'photos/photo_2026-05-26_17-23-08.jpg',
+        'photos/photo_2026-05-26_17-24-37.jpg',
+        'photos/photo_2026-05-26_17-24-28.jpg',
+        'photos/photo_2026-05-26_17-22-55.jpg',
+        'photos/photo_2026-05-26_17-23-02.jpg',
+        'photos/photo_2026-05-26_17-24-42 (2).jpg',
+        'photos/photo_2026-05-26_17-23-06 (2).jpg',
+        'photos/photo_2026-05-26_17-24-29 (2).jpg',
+        'photos/photo_2026-05-26_17-24-38.jpg',
+        'photos/photo_2026-05-26_17-22-56.jpg',
+        'photos/photo_2026-05-26_17-23-02 (2).jpg',
+        'photos/photo_2026-05-26_17-24-39.jpg',
+        'photos/photo_2026-05-26_17-24-22.jpg',
+        'photos/photo_2026-05-26_17-24-43 (2).jpg',
+        'photos/photo_2026-05-26_17-24-44.jpg',
+        'photos/photo_2026-05-26_17-22-59.jpg',
+        'photos/photo_2026-05-26_17-24-39 (2).jpg',
+        'photos/photo_2026-05-26_17-24-23.jpg',
+        'photos/photo_2026-05-26_17-24-37 (2).jpg',
+        'photos/photo_2026-05-26_17-24-45.jpg',
+        'photos/photo_2026-05-26_17-24-45 (2).jpg',
+        'photos/photo_2026-05-26_17-23-24.jpg',
+      ]
+    },
+    {
+      name: 'Signage & Brand Displays',
+      images: [
+        'photos/photo_2026-05-26_17-22-42.jpg',
+        'photos/photo_2026-05-26_17-22-47.jpg',
+        'photos/photo_2026-05-26_17-23-11.jpg',
+        'photos/photo_2026-05-26_17-22-44.jpg',
+        'photos/photo_2026-05-26_17-22-48 (2).jpg',
+        'photos/photo_2026-05-26_17-23-07.jpg',
+        'photos/photo_2026-05-26_17-22-45.jpg',
+        'photos/photo_2026-05-26_17-22-49.jpg',
+        'photos/photo_2026-05-26_17-23-12.jpg',
+        'photos/photo_2026-05-26_17-22-46.jpg',
+        'photos/photo_2026-05-26_17-22-50.jpg',
+      ]
+    }
+  ];
+
+  const lb = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lb-img');
+  const lbCaption = document.getElementById('lb-caption');
+  const lbClose = document.getElementById('lb-close');
+  const lbPrev = document.getElementById('lb-prev');
+  const lbNext = document.getElementById('lb-next');
+
+  let currentCat = 0;
+  let currentIdx = 0;
+
+  function openLightbox(cat, idx) {
+    currentCat = cat;
+    currentIdx = idx;
+    showImage();
+    lb.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    lb.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function showImage() {
+    const cat = categories[currentCat];
+    lbImg.src = cat.images[currentIdx];
+    lbImg.alt = cat.name + ' — ' + (currentIdx + 1);
+    lbCaption.textContent = cat.name + '  ·  ' + (currentIdx + 1) + ' / ' + cat.images.length;
+  }
+
+  function prevImage() {
+    const len = categories[currentCat].images.length;
+    currentIdx = (currentIdx - 1 + len) % len;
+    showImage();
+  }
+
+  function nextImage() {
+    const len = categories[currentCat].images.length;
+    currentIdx = (currentIdx + 1) % len;
+    showImage();
+  }
+
+  document.querySelectorAll('.photo-strip-item').forEach(function (el) {
+    el.addEventListener('click', function () {
+      openLightbox(parseInt(el.dataset.cat), parseInt(el.dataset.idx));
+    });
+  });
+
+  document.querySelectorAll('.category-intro-image').forEach(function (el) {
+    el.addEventListener('click', function () {
+      openLightbox(parseInt(el.dataset.cat), parseInt(el.dataset.idx));
+    });
+  });
+
+  lbClose.addEventListener('click', closeLightbox);
+  lbPrev.addEventListener('click', prevImage);
+  lbNext.addEventListener('click', nextImage);
+
+  lb.addEventListener('click', function (e) {
+    if (e.target === lb) closeLightbox();
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (!lb.classList.contains('open')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') prevImage();
+    if (e.key === 'ArrowRight') nextImage();
+  });
+})();
+</script>
+</body>
+</html>
