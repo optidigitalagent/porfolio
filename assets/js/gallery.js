@@ -13,6 +13,17 @@
   const state = { categories: [], active: 'all', currentImages: [], currentIndex: 0 };
   const escapeHtml = value => String(value).replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
 
+  function scrollToCurrentHash(behavior = 'auto') {
+    const id = decodeURIComponent(window.location.hash.replace(/^#/, ''));
+    if (!id || !state.categories.some(category => category.id === id)) return;
+    const target = document.getElementById(id);
+    if (!target) return;
+    const header = document.querySelector('[data-header]')?.offsetHeight || 76;
+    const toolbar = document.querySelector('.gallery-toolbar')?.offsetHeight || 0;
+    const top = target.getBoundingClientRect().top + window.scrollY - header - toolbar - 12;
+    window.scrollTo({ top: Math.max(0, top), behavior });
+  }
+
   function parseSource(html) {
     const doc = new DOMParser().parseFromString(html, 'text/html');
     return [...doc.querySelectorAll('.category-block')].slice(0, 3).map((block, index) => {
@@ -33,7 +44,12 @@
       host.querySelectorAll('.gallery-category').forEach(section => {
         section.hidden = state.active !== 'all' && section.dataset.category !== state.active;
       });
-      host.querySelector('.gallery-category:not([hidden])')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const first = host.querySelector('.gallery-category:not([hidden])');
+      if (first) {
+        const header = document.querySelector('[data-header]')?.offsetHeight || 76;
+        const toolbar = document.querySelector('.gallery-toolbar')?.offsetHeight || 0;
+        window.scrollTo({ top: first.getBoundingClientRect().top + window.scrollY - header - toolbar - 12, behavior: 'smooth' });
+      }
     }));
   }
 
@@ -47,6 +63,7 @@
       openLightbox(category.title);
     }));
     document.querySelectorAll('.reveal').forEach(el => el.classList.add('is-visible'));
+    requestAnimationFrame(() => scrollToCurrentHash('auto'));
   }
 
   const lightbox = document.querySelector('[data-lightbox]');
@@ -83,6 +100,7 @@
     if (event.key === 'ArrowLeft') move(-1);
     if (event.key === 'ArrowRight') move(1);
   });
+  window.addEventListener('hashchange', () => scrollToCurrentHash('smooth'));
 
   fetch('./gallery-data.html')
     .then(response => { if (!response.ok) throw new Error(`Gallery source failed: ${response.status}`); return response.text(); })
