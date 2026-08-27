@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /porfolio/gallery-data.html
+
+Sitemap: https://optidigitalagent.github.io/porfolio/sitemap.xml
